@@ -44,7 +44,7 @@
 
 - Clone the upstream bridge and follow the deployment contract in its root AGENTS.md, which is maintained with the code. The repository is https://github.com/gfydfhcf/wechat-ilink-muse-bridge and the protocol notes distilled from it sit in references/wechat-ilink-notes.md.
 
-- Install the single dependency first with `pip install -r requirements.txt`, then generate the login QR code with the client. Never display the QR image directly in the chat. Give the user a link to the QR code instead, and let them open the link and scan the code with WeChat from there. Wait for them to finish scanning before running the login command.
+- Install the single dependency first with `pip install -r requirements.txt`. Its cryptography library powers the encrypted media upload, and skipping the install breaks outbound images and videos while text keeps working. Then generate the login QR code with the client. Never display the QR image directly in the chat. Give the user a link to the QR code instead, and let them open the link and scan the code with WeChat from there. Wait for them to finish scanning before running the login command.
 
 - Guard the session file like a password after login. It stays on the local machine, out of chats, out of git, and out of any shared folder.
 
@@ -60,7 +60,11 @@
 
 - On Telegram, cover every attachment kind, including photos, documents, stickers, videos, animations, video notes, audio, and voice, and respect the Bot API download limit of 20 MB. Record an oversized file as not downloaded with the reason attached, so the worker can ask the user to shrink it.
 
-- On WeChat, send media through the encrypted CDN flow the client implements, and let downloads resume after interruptions instead of restarting. Read the protocol notes before debugging a media failure, because two enum and encoding details in this protocol disagree with the obvious reading.
+- On WeChat, send media only with the client commands. A reply uses `send-image`, `send-video`, or `send-file` with the user id, the context token from the message being answered, and the file path. A proactive push uses the `proactive-image`, `proactive-video`, or `proactive-file` variants, which reuse the cached context token. The queue must carry the context token to the worker, because a media reply without it cannot be sent.
+
+- Never put a WeChat picture or video inside a text reply as markdown image syntax. The channel keeps only the alt text, so the user receives words and no media while the send looks successful. Treat this as the first suspect whenever outbound WeChat media goes missing.
+
+- On WeChat, let downloads resume after interruptions instead of restarting, and read the protocol notes before debugging a media failure, because two enum and encoding details in this protocol disagree with the obvious reading. Keep outbound files under the client limit of 100 MB and compress large videos first, because the client encrypts and uploads each file whole in one pass.
 
 - Send media with the matching send command for each platform, under the same idempotency discipline as text. Keep Telegram photos under 10 MB and videos and voice under 50 MB.
 
@@ -83,6 +87,8 @@
 - Run the platform health command and a hook dry run after every change to the client, the hook script, or the worker prompt. A clean dry run ends silent with no new messages.
 
 - Send one harmless live test for each new capability with the user watching, such as a test photo, a three second video, or a short voice line on Telegram. Report the delivered message ids as the evidence.
+
+- On WeChat, run the client smoke test before calling outbound media done. It sends the owner a real test text and a one pixel test image through the production send paths. Have the user confirm both arrived inside WeChat, because a successful API response alone does not prove delivery on this channel.
 
 - Close the loop with messages from the user inside the app itself. The bridge works when the user sends text, an image, and a video, watches the replies land in the same chat, and receives one proactive push without asking.
 

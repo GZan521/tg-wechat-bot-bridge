@@ -48,6 +48,14 @@ Verification status: the Telegram route in this skill is verified end to end on 
 
 - Sending media takes four steps. Apply for an upload URL with getuploadurl, encrypt the file with AES-128-ECB, upload it to the CDN, then send the message with the media item attached. Two enum and encoding details in the protocol disagree with the obvious reading, and the upstream code comments mark both spots.
 
+- Outbound media goes through the client commands only. Reply mode is `send-image`, `send-file`, and `send-video` with user id, context token, and path, and the token must be the one that arrived with the message being answered. The proactive variants reuse the cached token. A queue that drops the context token leaves the worker able to reply in text and unable to send media.
+
+- Markdown image syntax inside a text reply does not carry a picture. Only the alt text survives, and the send still reports success, which makes it the most common silent cause of missing outbound images.
+
+- The send cap is 100 MB. The client encrypts the whole file in memory and uploads it in one POST, so large videos need compressing first. The cryptography package from requirements.txt performs the encryption, and a missing install fails media sends while text sends keep working.
+
+- `python3 ilink.py smoke-test` verifies the outbound path end to end by sending the owner a real test text and a one pixel test image through the production paths. Run it whenever outbound media is in doubt, and treat the user seeing the image inside WeChat as the pass mark.
+
 - Receiving media reverses the CDN path with decryption. Downloads resume with HTTP Range requests and exponential backoff, because a full restart on a weak network tends to die near the end of a large file.
 
 - Inbound quotes resolve locally. Poll keeps the quote relation the server sends, and a local cache maps message ids to originals for thirty days or ten thousand entries, including messages the bot itself sent. Messages from before the cache existed cannot be recovered, because the server has no fetch-by-id endpoint.
