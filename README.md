@@ -32,28 +32,6 @@
 3. **worker 提示词**：写在 hook 定义里的应答规矩——认领队列、打开附件再回复、判断该回谁、防刷屏上限（连续回复 5 条且无人说话就停）、发送幂等键。它是一等组件，不是附属品。
 4. **看门狗**：定时查心跳，只在「停摆」和「恢复」两个状态变化点发消息，平时安静。
 
-## 仓库结构
-
-```
-.
-├── README.md                        # 本说明
-├── SKILL.md                         # 技能本体：智能体照着它引导你对接
-├── skill.yaml                       # 技能元信息（名称、标题、简介）
-└── references/
-    ├── tg_poll.py                   # Telegram 客户端起步代码（轮询/发送/媒体/语音/健康检查）
-    ├── tg-bridge-inbox.sh           # Telegram 轮询 hook 起步脚本
-    ├── worker-prompt-template.md    # worker 提示词模板（占位符版，填好再注册 hook）
-    ├── wechat-ilink-notes.md        # 微信 iLink 协议笔记：登录、绑定、白名单、媒体、坑点
-    └── wechat-client/               # 内置的微信客户端快照（自包含，不依赖外部仓库）
-        ├── ilink.py                 # iLink 协议客户端（欢迎语为本部署的自定义版）
-        ├── AGENTS.md                # 部署契约，与代码一起维护
-        ├── daemon.py                # 示例驱动（协议学习用）
-        ├── requirements.txt         # 唯一依赖 cryptography
-        ├── LICENSE                  # 上游 MIT 许可证
-        ├── VENDORED.md              # 快照来源、版本与本地改动记录
-        └── examples/muse-hook/      # 生产用 hook 驱动脚本与说明
-```
-
 ## 怎么用
 
 **给 Muse 类智能体用（推荐）**：直接把这句话发给你的智能体「使用这个技能帮我连接微信ClawBot（或Telegram）https://github.com/GZan521/tg-wechat-bot-bridge」
@@ -77,7 +55,8 @@
 
 ## 致谢
 
-- 微信 iLink 协议的部署经验与客户端代码来自一个开源 iLink 桥项目（MIT 协议），本仓库的微信部分已按其契约在作者环境完成部署与验收，并把实测经验回写进 SKILL.md 与协议笔记；客户端快照已内置在 `references/wechat-client/`（快照与本地改动见其中的 VENDORED.md），部署以仓库内的 AGENTS.md 为准。
+- 微信通道的灵感与客户端代码来自开源项目 [gfydfhcf/wechat-ilink-muse-bridge](https://github.com/gfydfhcf/wechat-ilink-muse-bridge)（MIT 协议），是它提供了把 Muse 接进微信的思路与协议实现。本仓库的微信部分已按其契约在作者环境完成部署与验收，并把实测经验回写进 SKILL.md 与协议笔记；客户端快照已内置在 `references/wechat-client/`（快照与本地改动见其中的 VENDORED.md），部署以仓库内的 AGENTS.md 为准。
+- Telegram 部分来自作者本人在 Muse 上的一套真实在跑的桥：媒体双向、语音闭环、看门狗都经过实发验证。
 
 ## 许可
 
