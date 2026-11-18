@@ -10,7 +10,7 @@
 
 - Set capability expectations per platform before building anything. Telegram carries text, photos, videos, and voice in both directions. WeChat carries text, images, files, and videos in both directions, and voice only inbound, because the channel drops voice messages that a bot sends.
 
-- Offer the verified route first. The Telegram route runs in production for this user, while the WeChat route follows an upstream open source deployment that has not run here yet.
+- Offer the verified route first. Both routes run in production for this user. The WeChat route was deployed from the upstream open source bridge and verified live on 2026-11-18, with text, images, and video confirmed in both directions.
 
 ## Know the shared shape
 
@@ -44,7 +44,7 @@
 
 - Clone the upstream bridge and follow the deployment contract in its root AGENTS.md, which is maintained with the code. The repository is https://github.com/gfydfhcf/wechat-ilink-muse-bridge and the protocol notes distilled from it sit in references/wechat-ilink-notes.md.
 
-- Install the single dependency first with `pip install -r requirements.txt`. Its cryptography library powers the encrypted media upload, and skipping the install breaks outbound images and videos while text keeps working. Then generate the login QR code with the client. Never display the QR image directly in the chat. Give the user a link to the QR code instead, and let them open the link and scan the code with WeChat from there. Wait for them to finish scanning before running the login command.
+- Install the single dependency first with `pip install -r requirements.txt`. Its cryptography library powers the encrypted media upload, and skipping the install breaks outbound images and videos while text keeps working. Then generate the login QR code with the client. Never display the QR image directly in the chat. Give the user a link to the QR code instead, and let them open the link and scan the code with WeChat from there. The code expires in about two minutes, so have the user ready to scan before you generate it, and always generate a fresh code instead of reusing an old link. Wait for them to finish scanning before running the login command.
 
 - Guard the session file like a password after login. It stays on the local machine, out of chats, out of git, and out of any shared folder.
 
@@ -64,7 +64,9 @@
 
 - Never put a WeChat picture or video inside a text reply as markdown image syntax. The channel keeps only the alt text, so the user receives words and no media while the send looks successful. Treat this as the first suspect whenever outbound WeChat media goes missing.
 
-- On WeChat, let downloads resume after interruptions instead of restarting, and read the protocol notes before debugging a media failure, because two enum and encoding details in this protocol disagree with the obvious reading. Keep outbound files under the client limit of 100 MB and compress large videos first, because the client encrypts and uploads each file whole in one pass.
+- On WeChat, let downloads resume after interruptions instead of restarting, and read the protocol notes before debugging a media failure, because two enum and encoding details in this protocol disagree with the obvious reading. Keep outbound files under the client limit of 100 MB, and send media at its original quality by default. Full size images were verified to arrive intact on this channel, so shrink a file only as a last resort after repeated failures, and tell the user when you do.
+
+- Treat a WeChat send that ends with a closed connection or a missing response as an unknown outcome, never as a failure. The server may have delivered the media before the receipt was lost, and a live test here proved exactly that, with a full size image arriving after the client reported an error. Do not tell the user the send failed on that evidence, and do not resend until the user confirms it never arrived, because a blind resend delivers duplicates.
 
 - Send media with the matching send command for each platform, under the same idempotency discipline as text. Keep Telegram photos under 10 MB and videos and voice under 50 MB.
 

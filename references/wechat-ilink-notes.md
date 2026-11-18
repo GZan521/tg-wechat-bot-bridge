@@ -2,7 +2,7 @@
 
 Distilled from the open source bridge [gfydfhcf/wechat-ilink-muse-bridge](https://github.com/gfydfhcf/wechat-ilink-muse-bridge) (MIT license), which connects Muse to WeChat over Tencent's official iLink / ClawBot protocol at ilinkai.weixin.qq.com. The repository root carries an AGENTS.md deployment contract that is maintained with the code. Clone the repository and follow that contract for the deployment itself, and use these notes for the protocol facts, the limits, and the checks that sit around it.
 
-Verification status: the Telegram route in this skill is verified end to end on this user's live bridge. The WeChat route is distilled from the upstream repository and its documented production use by its author. It has not been deployed for this user yet, so treat the first deployment as a supervised trial and verify each stage before promising the result.
+Verification status: both routes in this skill are verified end to end on this user's live bridges. The WeChat route was deployed for this user on 2026-11-18 from the upstream repository, and text, image, and video delivery were all confirmed by the user inside WeChat, in reply mode and in proactive mode.
 
 ## How the channel works
 
@@ -52,7 +52,9 @@ Verification status: the Telegram route in this skill is verified end to end on 
 
 - Markdown image syntax inside a text reply does not carry a picture. Only the alt text survives, and the send still reports success, which makes it the most common silent cause of missing outbound images.
 
-- The send cap is 100 MB. The client encrypts the whole file in memory and uploads it in one POST, so large videos need compressing first. The cryptography package from requirements.txt performs the encryption, and a missing install fails media sends while text sends keep working.
+- The send cap is 100 MB. The client encrypts the whole file in memory and uploads it in one POST. Send at original quality by default, because full size images were verified to arrive intact, and shrink a file only as a last resort after repeated failures. The cryptography package from requirements.txt performs the encryption, and a missing install fails media sends while text sends keep working.
+
+- A send error that reports a closed connection or a disconnected remote end is an unknown outcome, not a failure. In the 2026-11-18 live test the client reported that error on an image send, the worker told the user the image had not gone through, and the full size image was sitting in the chat the whole time, because the server delivered it before the response was lost. Never declare failure on that error alone, and never resend on it without asking the user whether the media arrived, because resends land as duplicates.
 
 - `python3 ilink.py smoke-test` verifies the outbound path end to end by sending the owner a real test text and a one pixel test image through the production paths. Run it whenever outbound media is in doubt, and treat the user seeing the image inside WeChat as the pass mark.
 
