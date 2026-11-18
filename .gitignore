@@ -1,0 +1,23 @@
+# Secrets and session material: never commit these
+token.txt
+session.json
+data/
+*.muse-github-snapshot-sync.json
+
+# Runtime state
+state.json
+seen.json
+sent-ledger.json
+send-audit.jsonl
+alert-state.json
+watchdog-state.json
+relay-count.json
+media/
+transcripts/
+voice-out/
+*.log
+
+# Python
+__pycache__/
+*.pyc
+*-venv/

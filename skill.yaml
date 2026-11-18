@@ -1,0 +1,5 @@
+name: tg_wechat_bot_bridge
+title: Telegram and WeChat ClawBot Bridge
+description: Guide the user through connecting Telegram or WeChat ClawBot to Muse with one hook driven bridge design, exchanging text, images, videos, and voice where the channel allows it.
+category: Work and knowledge
+include_in_prompt: true
