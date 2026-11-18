@@ -34,7 +34,7 @@
 
 ## 怎么用
 
-**给 Muse 类智能体用（推荐）**：直接把这句话发给你的智能体「使用这个技能帮我连接微信ClawBot，https://github.com/GZan521/tg-wechat-bot-bridge」或「使用这个技能帮我连接Telegram，https://github.com/GZan521/tg-wechat-bot-bridge」
+**给 Muse 类智能体用（推荐）**：直接把这句话发给你的智能体「使用这个技能帮我连接微信ClawBot"https://github.com/GZan521/tg-wechat-bot-bridge"」或「使用这个技能帮我连接Telegram"https://github.com/GZan521/tg-wechat-bot-bridge"」
 
 **给其他智能体用**：把 `SKILL.md` 全文作为指令交给它，并让它能读到 `references/` 里的文件，效果相同。
 
