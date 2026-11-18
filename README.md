@@ -34,7 +34,7 @@
 
 ## 怎么用
 
-**给 Muse 类智能体用（推荐）**：直接把这句话发给你的智能体「使用这个技能帮我连接微信ClawBot（或Telegram）https://github.com/GZan521/tg-wechat-bot-bridge」
+**给 Muse 类智能体用（推荐）**：直接把这句话发给你的智能体「使用这个技能帮我连接微信ClawBot，https://github.com/GZan521/tg-wechat-bot-bridge」或「使用这个技能帮我连接Telegram，https://github.com/GZan521/tg-wechat-bot-bridge」
 
 **给其他智能体用**：把 `SKILL.md` 全文作为指令交给它，并让它能读到 `references/` 里的文件，效果相同。
 
@@ -56,7 +56,6 @@
 ## 致谢
 
 - 微信通道的灵感与客户端代码来自开源项目 [gfydfhcf/wechat-ilink-muse-bridge](https://github.com/gfydfhcf/wechat-ilink-muse-bridge)（MIT 协议），是它提供了把 Muse 接进微信的思路与协议实现。本仓库的微信部分已按其契约在作者环境完成部署与验收，并把实测经验回写进 SKILL.md 与协议笔记；客户端快照已内置在 `references/wechat-client/`（快照与本地改动见其中的 VENDORED.md），部署以仓库内的 AGENTS.md 为准。
-- Telegram 部分来自作者本人在 Muse 上的一套真实在跑的桥：媒体双向、语音闭环、看门狗都经过实发验证。
 
 ## 许可
 
