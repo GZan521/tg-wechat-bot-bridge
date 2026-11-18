@@ -1,6 +1,6 @@
 # WeChat ClawBot route notes (iLink protocol)
 
-Distilled from the open source bridge [gfydfhcf/wechat-ilink-muse-bridge](https://github.com/gfydfhcf/wechat-ilink-muse-bridge) (MIT license), which connects Muse to WeChat over Tencent's official iLink / ClawBot protocol at ilinkai.weixin.qq.com. The repository root carries an AGENTS.md deployment contract that is maintained with the code. Clone the repository and follow that contract for the deployment itself, and use these notes for the protocol facts, the limits, and the checks that sit around it.
+Distilled from an open source bridge (MIT license) that connects Muse to WeChat over Tencent's official iLink / ClawBot protocol at ilinkai.weixin.qq.com. The client and its AGENTS.md deployment contract are vendored into this skill under references/wechat-client, so deploy from that copy and follow its contract for the deployment itself, and use these notes for the protocol facts, the limits, and the checks that sit around it.
 
 Verification status: both routes in this skill are verified end to end on this user's live bridges. The WeChat route was deployed for this user on 2026-11-18 from the upstream repository, and text, image, and video delivery were all confirmed by the user inside WeChat, in reply mode and in proactive mode.
 
@@ -24,7 +24,7 @@ Verification status: both routes in this skill are verified end to end on this u
 
 - `daemon.py` is an example driver for any server. It commits the cursor only after handling, so a crash redelivers the batch. Use it to learn the protocol, not for production reliability.
 
-- The hook driver under `examples/muse-hook/` in the repository is the production route inside Muse. It uses the same spine as the Telegram route in this skill, with a durable queue, crash recovery, the alert loop, and a heartbeat watchdog.
+- The hook driver under `examples/muse-hook/` in the vendored client is the production route inside Muse. It uses the same spine as the Telegram route in this skill, with a durable queue, crash recovery, the alert loop, and a heartbeat watchdog.
 
 ## Commands worth knowing
 
@@ -42,7 +42,7 @@ Verification status: both routes in this skill are verified end to end on this u
 
 - `python3 ilink.py preflight` checks the environment before login, and `python3 ilink.py smoke-test` runs an end to end self check. `prune-media` enforces media retention (thirty days and 500 MB by default), and `rotate-chatlog` archives older chat logs.
 
-- `python3 ilink.py version-check` compares against the latest upstream release. The owner can subscribe to update notices and install an update by replying with the agreed keywords, and `rollback` restores the newest backup when an update misbehaves. Updates replace code only and never touch state files, and a changed AGENTS.md contract still needs a manual merge.
+- `python3 ilink.py version-check` compares against the latest upstream release. The owner can subscribe to update notices and install an update by replying with the agreed keywords, and `rollback` restores the newest backup when an update misbehaves. Updates replace code only and never touch state files, and a changed AGENTS.md contract still needs a manual merge. Because this skill vendors the client, treat an upstream update as source material to merge by hand rather than a blind install, because installing overwrites the vendored copy and its custom welcome messages.
 
 ## Media flow
 

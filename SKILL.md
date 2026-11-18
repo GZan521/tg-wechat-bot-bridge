@@ -42,7 +42,7 @@
 
 ## Connect WeChat ClawBot
 
-- Clone the upstream bridge and follow the deployment contract in its root AGENTS.md, which is maintained with the code. The repository is https://github.com/gfydfhcf/wechat-ilink-muse-bridge and the protocol notes distilled from it sit in references/wechat-ilink-notes.md.
+- Use the vendored WeChat client in references/wechat-client and follow the deployment contract in its AGENTS.md, which is maintained with the code. The client is a snapshot of an open source iLink bridge (MIT), vendored into this skill on 2026-11-18 so that deployments no longer depend on any external repository. The snapshot record and the local changes against it sit in references/wechat-client/VENDORED.md, and the protocol notes distilled from the project sit in references/wechat-ilink-notes.md.
 
 - Install the single dependency first with `pip install -r requirements.txt`. Its cryptography library powers the encrypted media upload, and skipping the install breaks outbound images and videos while text keeps working. Then generate the login QR code with the client. Never display the QR image directly in the chat. Give the user a link to the QR code instead, and let them open the link and scan the code with WeChat from there. The code expires in about two minutes, so have the user ready to scan before you generate it, and always generate a fresh code instead of reusing an old link. Wait for them to finish scanning before running the login command.
 
@@ -50,7 +50,7 @@
 
 - Open the owner binding window right after login and have the user send the bot a message before it closes. The first sender becomes the owner, the whitelist is enforced in code from that moment, and approvals for new senders happen only in the main chat, never inside WeChat itself.
 
-- Choose the hook driver from the repository examples for a Muse deployment. Keep the example daemon for protocol learning only, and run exactly one driver at a time.
+- Choose the hook driver from the vendored client examples for a Muse deployment. Keep the example daemon for protocol learning only, and run exactly one driver at a time.
 
 - Expect the session to expire at an unpredictable time. The bridge asks for a fresh scan once when that happens, and the user performs the scan while the agent waits.
 

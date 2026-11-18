@@ -10,6 +10,7 @@
 - **多媒体双向**：文字、图片、视频、文件在两个通道都能收能发；Telegram 额外支持语音双向（你发语音，它转写后用语音回你），微信语音只能收不能发（通道会静默丢弃 bot 发出的语音）。
 - **无常驻进程**：靠轮询 hook + 持久队列工作，机器重启不丢消息；发送带幂等账本，同一条消息不会重复发；看门狗只在状态变化时才提醒你。
 - **安全边界写死在流程里**：token / 登录会话只存本地、绝不进聊天和仓库；微信新联系人上白名单只能由你在主对话里批准，陌生人没法在微信里把自己聊进白名单。
+- **自带微信客户端，不依赖外部仓库**：微信通道的协议客户端、部署契约和 hook 驱动已内置在本仓库 `references/wechat-client/`（上游开源项目的快照，MIT），克隆本仓库就能部署，上游仓库不在了也不影响。
 
 ## 两个通道的能力对照
 
@@ -42,7 +43,15 @@
     ├── tg_poll.py                   # Telegram 客户端起步代码（轮询/发送/媒体/语音/健康检查）
     ├── tg-bridge-inbox.sh           # Telegram 轮询 hook 起步脚本
     ├── worker-prompt-template.md    # worker 提示词模板（占位符版，填好再注册 hook）
-    └── wechat-ilink-notes.md        # 微信 iLink 协议笔记：登录、绑定、白名单、媒体、坑点
+    ├── wechat-ilink-notes.md        # 微信 iLink 协议笔记：登录、绑定、白名单、媒体、坑点
+    └── wechat-client/               # 内置的微信客户端快照（自包含，不依赖外部仓库）
+        ├── ilink.py                 # iLink 协议客户端（欢迎语为本部署的自定义版）
+        ├── AGENTS.md                # 部署契约，与代码一起维护
+        ├── daemon.py                # 示例驱动（协议学习用）
+        ├── requirements.txt         # 唯一依赖 cryptography
+        ├── LICENSE                  # 上游 MIT 许可证
+        ├── VENDORED.md              # 快照来源、版本与本地改动记录
+        └── examples/muse-hook/      # 生产用 hook 驱动脚本与说明
 ```
 
 ## 怎么用
@@ -57,7 +66,7 @@
 
 - 一个能跑智能体 + 定时 hook 的环境（本 skill 按 Muse 的运行环境编写，其他环境需自行适配 hook 与看门狗部分）。
 - Telegram 通道：一个 Telegram 账号，用来向 @BotFather 申请 bot。
-- 微信通道：一个微信账号，用来扫码登录 ClawBot；另外需要克隆上游项目 [gfydfhcf/wechat-ilink-muse-bridge](https://github.com/gfydfhcf/wechat-ilink-muse-bridge) 并按其根目录 AGENTS.md 的部署契约执行，本仓库的 `references/wechat-ilink-notes.md` 是配套的协议笔记。
+- 微信通道：一个微信账号，用来扫码登录 ClawBot；客户端与部署契约已内置在本仓库 `references/wechat-client/`，按其中 AGENTS.md 的契约执行即可，不需要再克隆任何外部仓库，本仓库的 `references/wechat-ilink-notes.md` 是配套的协议笔记。
 - 语音闭环（可选，仅 Telegram）：本地语音转写（如 faster-whisper）与一个你认可的语音合成音色。
 
 ## 安全须知
@@ -68,7 +77,7 @@
 
 ## 致谢
 
-- 微信 iLink 协议的部署经验来自开源项目 [gfydfhcf/wechat-ilink-muse-bridge](https://github.com/gfydfhcf/wechat-ilink-muse-bridge)（MIT 协议），本仓库的微信部分已按其契约在作者环境完成部署与验收，并把实测经验回写进 SKILL.md 与协议笔记；部署时请以该仓库的最新 AGENTS.md 为准。
+- 微信 iLink 协议的部署经验与客户端代码来自一个开源 iLink 桥项目（MIT 协议），本仓库的微信部分已按其契约在作者环境完成部署与验收，并把实测经验回写进 SKILL.md 与协议笔记；客户端快照已内置在 `references/wechat-client/`（快照与本地改动见其中的 VENDORED.md），部署以仓库内的 AGENTS.md 为准。
 - Telegram 部分来自作者本人在 Muse 上的一套真实在跑的桥：媒体双向、语音闭环、看门狗都经过实发验证。
 
 ## 许可
