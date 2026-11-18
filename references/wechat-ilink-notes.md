@@ -8,7 +8,7 @@ Verification status: the Telegram route in this skill is verified end to end on 
 
 - The bot is a separate iLink identity inside WeChat. It only receives messages sent to the bot itself, and the protocol has no endpoints for the user's own chats, contacts, or moments.
 
-- Login is a QR scan. Run `python3 ilink.py qrcode` to print a QR image path, have the user scan it with WeChat, then run `python3 ilink.py login <qrcode-id>`. The login state lands in `data/session.json` under the data directory (default ./data, override with the ILINK_DATA_DIR environment variable).
+- Login is a QR scan. Run `python3 ilink.py qrcode` to print a QR image path, give the user a link to that image instead of displaying the image in the chat, and have the user open the link and scan it with WeChat, then run `python3 ilink.py login <qrcode-id>`. The login state lands in `data/session.json` under the data directory (default ./data, override with the ILINK_DATA_DIR environment variable).
 
 - Treat `data/session.json` as a password. It stays local, it is gitignored upstream, and it never gets shared, pasted into chats, or committed anywhere.
 

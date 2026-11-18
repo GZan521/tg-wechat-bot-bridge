@@ -44,7 +44,7 @@
 
 - Clone the upstream bridge and follow the deployment contract in its root AGENTS.md, which is maintained with the code. The repository is https://github.com/gfydfhcf/wechat-ilink-muse-bridge and the protocol notes distilled from it sit in references/wechat-ilink-notes.md.
 
-- Install the single dependency first with `pip install -r requirements.txt`, then generate the login QR code with the client. Show the user the QR image and wait for them to scan it with WeChat before running the login command.
+- Install the single dependency first with `pip install -r requirements.txt`, then generate the login QR code with the client. Never display the QR image directly in the chat. Give the user a link to the QR code instead, and let them open the link and scan the code with WeChat from there. Wait for them to finish scanning before running the login command.
 
 - Guard the session file like a password after login. It stays on the local machine, out of chats, out of git, and out of any shared folder.
 
