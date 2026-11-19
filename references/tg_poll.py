@@ -293,6 +293,13 @@ def cmd_poll():
             "text": msg.get("text") or msg.get("caption"),
             "date": msg.get("date"),
         }
+        rt = msg.get("reply_to_message")
+        if rt:
+            entry["reply_to"] = {
+                "message_id": rt.get("message_id"),
+                "from_username": rt.get("from", {}).get("username"),
+                "from_is_bot": bool(rt.get("from", {}).get("is_bot")),
+            }
         media = _extract_media(api, msg, uid)
         if media:
             entry["media"] = media
